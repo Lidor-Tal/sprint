@@ -9,11 +9,19 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body oncontextmenu=" return false;">
+<h1>Mine Sweeper</h1>
+
+
+
+<body>
+
 
     <body onload="initGame()">
-        <h1>Mine Sweeper</h1>
-        <table>
+        <button class="beginner" onclick="initGame({SIZE:4,MINES:2})">beginner</button>
+        <button class="medium" onclick="initGame({SIZE:10,MINES:20})">medium</button>
+        <button class=" expert" onclick="initGame({SIZE:14,MINES:30})">expert</button>
+        <br> <button id="mybtn" class=" restart">restart</button>
+        <table class="floor board">
             <tbody class="board">
 
             </tbody>
