@@ -1,9 +1,7 @@
 'use strict'
 const MINES = '💣'
 const FLAG = '🚩'
-document.addEventListener("contextmenu", e => {
-    e.isMarked
-})
+
 var gCell = {
     minesAroundCount: 0,
     isShown: false,
@@ -51,7 +49,7 @@ function buildBoard() {
     return board
 }
 function renderBoard(mat) {
-    var strHTML = '<table border="0"><tbody>'
+    var strHTML = '<table border="1"><tbody>'
     for (var i = 0; i < mat.length; i++) {
 
         strHTML += '<tr>'
@@ -113,7 +111,11 @@ function getRandomBombCell(board) {
 }
 
 function cellClicked(elCell, i, j) {
-    cellRightClicked(i, j)
+    elCell.oncontextmenu = function (e) {
+        e.preventDefault()
+        addFlag()
+    }
+    // cellRightClicked(i, j)
     if (gGame.isOn === true) {
         if (cellClicked)
             numOfMinesArounMe(elCell, i, j)
@@ -123,32 +125,44 @@ function cellClicked(elCell, i, j) {
         if (cell === MINES) {
             gCell.isMine = true
             renderCell({ i: i, j: j }, MINES)
+            gGame.isOn = false
             gameOver()
         }
         return
     }
 }
-
 function gameOver() {
-    gGame.isOn = false
-
+    if (gGame.isOn === false)
+        var myBtn = document.getElementById('mybtn')
+    myBtn.addEventListener("click", gameRestart)
 }
-
+function gameRestart() {
+    gGame.isOn = true
+    gBoard = buildBoard()
+    renderBoard(gBoard)
+    getRandomBombCell(gBoard)
+    gCell = {
+        minesAroundCount: 0,
+        isShown: false,
+        isMine: false,
+        isMarked: true
+    }
+}
+function addFlag(gBoard) {
+    gBoard.classList.toggle('FLAG')
+    gBoard.innerHTML = '🚩'
+}
 function renderCell(location, value) {
     // Select the elCell and set the value
     const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
     elCell.innerHTML = value
 }
-function cellRightClicked(i, j) {
-    var cell = gBoard[i][j]
-    function handleMouseUp(e) {
-        if (e.button === 2) {
-            renderCell({ i: i, j: j }, FLAG)
-        }
-    }
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-    });
 
-}
+// function start() {
+//     stop();
+//     value = 0;
+//     timerInterval = setInterval(changeValue, 1000);
+// }
+// var stop = function () {
+//     clearInterval(timerInterval);
+// }
