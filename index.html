@@ -16,17 +16,17 @@
 <body>
 
 
-    <body onload="initGame()">
+    <body onload="initGame({SIZE:4,MINES:2})">
         <button class="beginner" onclick="initGame({SIZE:4,MINES:2})">beginner</button>
         <button class="medium" onclick="initGame({SIZE:10,MINES:20})">medium</button>
         <button class=" expert" onclick="initGame({SIZE:14,MINES:30})">expert</button>
-        <br> <button id="mybtn" class=" restart">restart</button>
+        <br> <button class="restart" onclick="gameRestart()">restart</button>
         <table class="floor board">
             <tbody class="board">
 
             </tbody>
         </table>
-
+        <div id="end" class="over hide">GAME OVER</div>
         <script src="js/game.js"></script>
         <script src="js/Util.js"></script>
 

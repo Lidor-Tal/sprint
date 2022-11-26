@@ -20,29 +20,42 @@ h1 {
 }
 
 .board {
-
     height: 100px;
     text-align: center;
     font-size: 1.5em;
     margin: auto;
-    margin-top: 50px;
+    margin-top: 10px;
     position: center;
     background-attachment: scroll;
 }
 
-.floor {
-    background-color: gray;
-    width: 100;
-    height: 100px;
-    font-size: 1.5em;
-    border: 3px;
-}
-
 .table {
 
-    margin: 25px auto;
+    margin: 20px auto;
 }
 
 .flag {
     text-align: '🚩';
+}
+
+.cell {
+    height: 50px;
+    width: 50px;
+    background-color: white;
+    padding: 10px;
+}
+
+.over {
+    height: 50px;
+    width: 100px;
+    font-size: medium;
+    color: rgb(210, 13, 13);
+    font-size: 2em;
+    text-align: center;
+    margin: auto;
+}
+
+.hide {
+    display: none;
+
 }

@@ -1,6 +1,9 @@
 'use strict'
 const MINES = '💣'
 const FLAG = '🚩'
+var gElCells = [];
+
+
 
 var gCell = {
     minesAroundCount: 0,
@@ -25,49 +28,73 @@ var isShawn = true
 
 var gBoard
 
-function initGame() {
+function initGame(level) {
+    gBoard = []
     if (gGame.isOn === true) {
-        gBoard = buildBoard()
+        gLevel = level
+        gBoard = buildBoard(level.SIZE)
         renderBoard(gBoard)
         getRandomBombCell(gBoard)
-        // cellRightClicked(gBoard)
     }
 }
 
 
-function buildBoard() {
-    var size = gLevel.SIZE
-    const board = []
-    for (var i = 0; i < size; i++) {
-        board.push([])
-        for (var j = 0; j < size; j++) {
-            board[i][j] = '⬜'
+function buildBoard(boardSize) {
+    var board = [];
+    for (var i = 0; i < boardSize; i++) {
+        board.push([]);
+        for (var j = 0; j < boardSize; j++) {
+            board[i][j] = {
+                i,
+                j,
+                isClicked: false,
+                isMine: false,
+                isMarked: false,
+                minesAroundCount: 0,
+            };
         }
     }
-    setMinesNegsCount(board)
-
-    return board
+    return board;
 }
-function renderBoard(mat) {
-    var strHTML = '<table border="1"><tbody>'
-    for (var i = 0; i < mat.length; i++) {
-
-        strHTML += '<tr>'
-        for (var j = 0; j < mat[0].length; j++) {
-
-            const cell = mat[i][j]
+function renderBoard(board) {
+    var strHTML = '';
+    for (var i = 0; i < board.length; i++) {
+        strHTML += '<tr>';
+        for (var j = 0; j < board.length; j++) {
+            var currCell = board[i][j];
             const className = `cell cell-${i}-${j}`
-
-            strHTML += `<td 
-            onclick="cellClicked(this, ${i}, ${j})" data-i="${i}" data-j="${j}", class="${className}">
-            ${cell}</td>`
+            strHTML += `
+        <td>
+        <button class='${className}',
+                id="${i}-${j}"
+                data-i="${i}" 
+                data-j="${j}",
+               onclick="setOnClick(this, ${i}, ${j})"></button>
+        </td>`;
         }
-        strHTML += '</tr>'
+        strHTML += '</tr>';
     }
-    strHTML += '</tbody></table>'
-
-    const elContainer = document.querySelector('.board')
-    elContainer.innerHTML = strHTML
+    const elBoard = document.querySelector('.board');
+    elBoard.innerHTML = null;
+    elBoard.innerHTML += strHTML;
+    gElCells = document.querySelectorAll('.cell');
+}
+function setOnClick(elCell) {
+    if (gGame.isOn === true) {
+        // console.table(gBoard)
+        var rowCell = elCell.id[0]
+        var colCell = elCell.id[2]
+        numOfMinesArounMe(rowCell, colCell)
+        var cell = gBoard[rowCell][colCell]
+        if (cell.isMine === true) {
+            renderCell({ i: rowCell, j: colCell }, MINES)
+            gameOver()
+        }
+        if (cell.isMine !== true) {
+            renderCell({ i: rowCell, j: colCell }, gCell.minesAroundCount)
+        }
+        return
+    }
 }
 function setMinesNegsCount(board) {
     console.table(board)
@@ -85,7 +112,7 @@ function setMinesNegsCount(board) {
         }
     }
 }
-function numOfMinesArounMe(board, rowIdx, colIdx) {
+function numOfMinesArounMe(rowIdx, colIdx) {
     var count = 0
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
         if (i < 0 || i >= gBoard.length) continue
@@ -93,76 +120,46 @@ function numOfMinesArounMe(board, rowIdx, colIdx) {
             if (i === rowIdx && j === colIdx) continue
             if (j < 0 || j >= gBoard[0].length) continue
             var cell = gBoard[i][j]
-            // console.log(cell)
-            if (cell === MINES) {
+            if (cell.isMine === true) {
                 count++
             }
-            gCell.minesAroundCount = count
-
         }
+        gCell.minesAroundCount = count
+        return
     }
 }
 function getRandomBombCell(board) {
     for (var i = 0; i < gLevel.MINES; i++) {
         var indexI = getRandomInt(0, gLevel.SIZE)
         var indexJ = getRandomInt(0, gLevel.SIZE)
-        board[indexI][indexJ] = MINES
-    }
-}
-
-function cellClicked(elCell, i, j) {
-    elCell.oncontextmenu = function (e) {
-        e.preventDefault()
-        addFlag()
-    }
-    // cellRightClicked(i, j)
-    if (gGame.isOn === true) {
-        if (cellClicked)
-            numOfMinesArounMe(elCell, i, j)
-
-        renderCell({ i: i, j: j }, gCell.minesAroundCount)
-        var cell = gBoard[i][j]
-        if (cell === MINES) {
-            gCell.isMine = true
-            renderCell({ i: i, j: j }, MINES)
-            gGame.isOn = false
-            gameOver()
-        }
-        return
+        board[indexI][indexJ].isMine = true
+        console.log(board[indexI][indexJ])
     }
 }
 function gameOver() {
-    if (gGame.isOn === false)
-        var myBtn = document.getElementById('mybtn')
-    myBtn.addEventListener("click", gameRestart)
-}
-function gameRestart() {
-    gGame.isOn = true
-    gBoard = buildBoard()
-    renderBoard(gBoard)
-    getRandomBombCell(gBoard)
-    gCell = {
-        minesAroundCount: 0,
-        isShown: false,
-        isMine: false,
-        isMarked: true
-    }
-}
-function addFlag(gBoard) {
-    gBoard.classList.toggle('FLAG')
-    gBoard.innerHTML = '🚩'
-}
-function renderCell(location, value) {
-    // Select the elCell and set the value
-    const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
-    elCell.innerHTML = value
+    const el = document.getElementById("end")
+    el.classList.toggle("hide")
+    // gGame.isOn = false
 }
 
-// function start() {
-//     stop();
-//     value = 0;
-//     timerInterval = setInterval(changeValue, 1000);
+
+function gameRestart() {
+    const el = document.getElementById("end")
+    el.classList.toggle("hide")
+    gGame.isOn = true
+    initGame(gLevel)
+}
+// function addFlag(gBoard) {
+//     gBoard.classList.toggle('FLAG')
+//     gBoard.innerHTML = '🚩'
 // }
-// var stop = function () {
-//     clearInterval(timerInterval);
-// }
+function getClassName(location) {
+    const cellClass = 'cell-' + location.i + '-' + location.j
+    return cellClass
+}
+function renderCell(location, value) {
+    const cellSelector = '.' + getClassName(location) // cell-i-j
+    const elCell = document.querySelector(cellSelector)
+    console.log(elCell)
+    elCell.innerHTML = value
+}
