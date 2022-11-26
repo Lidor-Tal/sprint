@@ -106,7 +106,6 @@ function setMinesNegsCount(board) {
             currCell = board[i][j]
             if (currCell === MINES) {
                 gMINESCOUNT++
-                // console.log(gMINESCOUNT)
             }
 
         }
@@ -125,8 +124,8 @@ function numOfMinesArounMe(rowIdx, colIdx) {
             }
         }
         gCell.minesAroundCount = count
-        return
     }
+    return
 }
 function getRandomBombCell(board) {
     for (var i = 0; i < gLevel.MINES; i++) {
@@ -139,20 +138,14 @@ function getRandomBombCell(board) {
 function gameOver() {
     const el = document.getElementById("end")
     el.classList.toggle("hide")
-    // gGame.isOn = false
+    gGame.isOn = false
 }
-
-
 function gameRestart() {
     const el = document.getElementById("end")
     el.classList.toggle("hide")
     gGame.isOn = true
     initGame(gLevel)
 }
-// function addFlag(gBoard) {
-//     gBoard.classList.toggle('FLAG')
-//     gBoard.innerHTML = '🚩'
-// }
 function getClassName(location) {
     const cellClass = 'cell-' + location.i + '-' + location.j
     return cellClass
